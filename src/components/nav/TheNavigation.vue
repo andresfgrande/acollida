@@ -8,7 +8,16 @@
       <a href="#">Contact</a>
     </div>
 
-    <span class="sub-header" style="font-size:30px;cursor:pointer" @click="openNav">&#9776; acollida</span>
+    <div class="sub-header">
+      <div class="menu">
+        <span  style="font-size:30px;cursor:pointer" @click="openNav">&#9776;</span>
+      </div>
+      <div class="app-name">
+        <span style="font-size:30px; text-align: center;">App</span>
+      </div>
+
+    </div>
+
   </div>
 </template>
 
@@ -38,6 +47,16 @@ export default {
 .sub-header{
   margin-left: 0.5em;
 }
+.menu{
+  width: 5%;
+  display: inline-block;
+}
+.app-name{
+  width: 90%;
+  display: inline-block;
+  text-align: center;
+}
+
 .sidenav {
   height: 100%;
   width: 250px;
