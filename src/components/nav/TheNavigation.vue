@@ -1,11 +1,11 @@
 <template>
   <div class="main-header">
     <div id="mySidenav" v-if="showNav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" @click="openNav">&times;</a>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Clients</a>
-      <a href="#">Contact</a>
+      <a class="closebtn" @click="openNav">&times;</a>
+      <router-link to="/login" v-if="!isLoggedIn" @click="openNav">Iniciar sesión</router-link>
+      <router-link to="/register" v-if="!isLoggedIn" @click="openNav">Crear cuenta</router-link>
+      <router-link to="/account" v-if="isLoggedIn" @click="openNav">Mi cuenta</router-link>
+      <a class="logout" v-if="isLoggedIn" @click="logout">Cerrar sesión</a>
     </div>
 
     <div class="sub-header">
@@ -13,7 +13,8 @@
         <span  style="font-size:30px;cursor:pointer" @click="openNav">&#9776;</span>
       </div>
       <div class="app-name">
-        <span style="font-size:30px; text-align: center;">App</span>
+<!--        <span style="font-size:30px; text-align: center;">App</span>-->
+        <router-link style="font-size:30px;" to="/" >Acollida</router-link>
       </div>
 
     </div>
@@ -29,32 +30,54 @@ export default {
       showNav: false,
     }
   },
+  computed:{
+    isLoggedIn(){
+      return this.$store.getters.isAuthenticated;
+    }
+  },
   methods:{
     openNav(){
       this.showNav = this.showNav === false;
+    },
+    logout(){
+      this.$store.dispatch('logout');
+      this.$router.replace('/login');
+      this.openNav();
     }
   }
 }
 </script>
 
 <style scoped>
+.logout{
+  position: fixed;
+  bottom: 0;
+}
+
 .main-header{
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-  padding-top: 0.7em;
-  padding-bottom: 0.7em;
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
 }
 .sub-header{
   margin-left: 0.5em;
 }
+.closebtn{
+  cursor: pointer;
+}
 .menu{
-  width: 5%;
+  width: 8%;
   display: inline-block;
 }
 .app-name{
   width: 90%;
   display: inline-block;
   text-align: center;
+}
+.app-name a{
+  text-decoration: none;
+  color: #2c3e50;
 }
 
 .sidenav {

@@ -1,19 +1,36 @@
 <template>
-<!--  <img alt="Vue logo" src="./assets/logo.png">-->
-<!--  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
   <the-navigation></the-navigation>
+  <main>
+    <router-view></router-view>
+  </main>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue';
 import TheNavigation from './components/nav/TheNavigation';
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld
     TheNavigation
-  }
+  },
+  created(){
+    this.$store.dispatch('tryLogin');
+  },
+  watch:{
+    didAutoLogout(curvalue, oldValue){
+      if(curvalue && curvalue !== oldValue){
+        this.$router.replace('/login');
+      }
+    }
+  },
+  computed:{
+    isAuth(){
+      return this.$store.getters.userIsAuthenticated;
+    },
+    didAutoLogout(){
+      return this.$store.getters.didAutoLogout;
+    }
+  },
 }
 </script>
 
