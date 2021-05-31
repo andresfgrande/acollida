@@ -1,9 +1,9 @@
 <template>
-  <h3> Hello Month!</h3>
-  <p>{{month}}</p>
+  <h3 class="title"> {{ monthData.name }} {{monthData.year}}</h3>
+<!--  <p>{{monthData}}</p>-->
 
   <div class="cards"> <!--TODO Hacer como componente KidItem-->
-    <div class="card" v-for="kid in month.kids" v-bind:key="kid.kid_id">
+    <div class="card" v-for="kid in monthData.kids" v-bind:key="kid.kid_id">
       <h4>{{kid.name}} {{kid.surname}}</h4>
       <a @click="goToKid(kid.name, kid.kid_id)">Ver</a>
     </div>
@@ -17,33 +17,30 @@ export default {
   name: "Month",
   props: ['monthId'],
   created(){
-    //TODO Current month vuex
-    this.month.name = this.$route.params.monthName;
-    this.month.year = this.$route.params.monthYear;
     this.getAlumnosFromMonth();
     console.log(this.monthId);
   },
   data(){
     return{
       month:{
-        name:'',
         monthId: '',
-        year:'',
-        kids: ''
       },
+      monthData:{}
     }
   },
   methods:{
     goToKid(name, id){
-      this.$router.push({name:'kid', params:{ name: name, kidId: id}});
+      this.$router.push({name:'kid', params:{ name: name, kidId: id, monthId: this.$route.params.monthId/*this.monthId*/}});
     },
     getAlumnosFromMonth(){
-      var docRefAlumnos = db.collection("months").doc(this.monthId);
+      var docRefAlumnos = db.collection("months").doc(this.$route.params.monthId/*this.monthId*/);
 
       docRefAlumnos.get().then((doc) => {
         if (doc.exists) {
           console.log("Document data:", doc.data().kids);
           this.month.kids = doc.data().kids;
+          this.month.monthId = this.monthId;
+          this.monthData = doc.data();
         } else {
           console.log("No such document!");
         }

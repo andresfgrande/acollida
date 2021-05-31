@@ -17,8 +17,8 @@ const router = createRouter({
         { path: '/login' , component: UserLogin, meta:{requiresUnauth: true}},
         { path: '/register' , component: UserRegister, meta:{requiresUnauth: true}},
         { path: '/account' , component: Account, meta:{requiresAuth: true}},
-        { path: '/month/:name/:year' ,name: 'month', component: Month, props:true ,meta:{requiresAuth: true}},
-        { path: '/kid/:name' ,name: 'kid', component: Kid, props:true ,meta:{requiresAuth: true}},
+        { path: '/month/:name/:year/:monthId' ,name: 'month', component: Month, props:true ,meta:{requiresAuth: true}},
+        { path: '/kid/:name/:kidId/:monthId' ,name: 'kid', component: Kid, props:true ,meta:{requiresAuth: true}},
         { path: '/:noFound(.*)' , component: NotFound }
     ]
 });
