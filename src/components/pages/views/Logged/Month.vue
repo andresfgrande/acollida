@@ -2,11 +2,35 @@
   <h3 class="title"> {{ monthData.name }} {{monthData.year}}</h3>
 <!--  <p>{{monthData}}</p>-->
 
-  <div class="cards"> <!--TODO Hacer como componente KidItem-->
+  <div class="cards">
     <div class="card" v-for="kid in monthData.kids" v-bind:key="kid.kid_id">
-      <h4>{{kid.name}} {{kid.surname}}</h4>
+      <h4>{{kid.name}} {{kid.surname}} {{kid.paid}}</h4>
+      <p>{{kid.total_price}}</p>
+
       <a @click="goToKid(kid.name, kid.kid_id)">Ver</a>
     </div>
+  </div>
+
+  <button v-if="!showSaveKid" type="button" @click="createKid">Añadir niño</button>
+
+  <div v-if="showSaveKid">
+    <div class="form-control">
+      <label for="name"> Nombre </label>
+      <input type="text" id="name" v-model="newName"/>
+    </div>
+    <div class="form-control">
+      <label for="surname"> Apellido </label>
+      <input type="text" id="surname"  v-model="newSurname"/>
+    </div>
+    <div class="form-control">
+      <label for="final_hour"> Hora fin </label>
+      <input type="time" id="final_hour" v-model="newKidFinalHour"/>
+    </div>
+    <div class="form-control">
+      <label for="fare"> Tarifa </label>
+      <input type="number" id="fare" v-model="newFare"/>
+    </div>
+    <button  type="button" @click="saveKid">Guardar</button>
   </div>
 </template>
 
@@ -25,7 +49,12 @@ export default {
       month:{
         monthId: '',
       },
-      monthData:{}
+      monthData:{},
+      showSaveKid: false,
+      newKidFinalHour: '09:00',
+      newName: '',
+      newFare: 2.25,
+      newSurname: ''
     }
   },
   methods:{
@@ -47,6 +76,58 @@ export default {
       }).catch((error) => {
         console.log("Error getting document:", error);
       });
+    },
+
+    createKid(){
+      this.showSaveKid = true;
+    },
+    saveKid(){
+      db.collection("kids").add({
+        fare: parseFloat(this.newFare),
+        final_hour: this.newKidFinalHour,
+        name: this.newName,
+        surname: this.newSurname,
+        months: {
+          [this.month.monthId]: {
+            'days':[],
+            month_name: this.monthData.name,
+            month_year: this.monthData.year,
+            paid: false,
+            total_hours: 0,
+            total_minutes: 0,
+            total_price: 0
+          },
+        },
+      })
+          .then((docRef) => {
+            console.log("Document successfully written!", docRef.id);
+            this.addKidToMonth(docRef.id)
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+    },
+    addKidToMonth(kidId){
+      db.collection("months").doc(this.month.monthId).set({
+        kids: {
+          [kidId]: {
+            kid_id:kidId,
+            name: this.newName,
+            surname: this.newSurname,
+            paid: false,
+            total_price: 0,
+          },
+        },
+
+      }, { merge: true })
+          .then(() => {
+            console.log("Document successfully written!");
+            this.showSaveKid = false;
+            this.getAlumnosFromMonth();
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
     },
   }
 }

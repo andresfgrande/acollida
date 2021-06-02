@@ -19,6 +19,15 @@
     </div>
   </div>
 
+  <button v-if="!showSaveMonth" type="button" @click="createMonth">Añadir mes</button>
+
+  <div v-if="showSaveMonth">
+    <div class="form-control">
+      <label for="name"> Nombre (Ejem.: Abril) </label>
+      <input type="text" id="name" v-model="newMonthName"/>
+    </div>
+    <button  type="button" @click="saveMonth">Guardar</button>
+  </div>
 </template>
 
 <script>
@@ -40,7 +49,10 @@ export default {
       },
       year:{
         months: [],
-      }
+      },
+      showSaveMonth: false,
+      newMonthName: '',
+      newMonthYear: '',
     }
   },
 
@@ -106,7 +118,42 @@ export default {
         console.log("Error getting document:", error);
       });
     },
+    createMonth(){
+      this.showSaveMonth = true;
+    },
+    saveMonth(){
+      db.collection("months").add({
+        name: this.newMonthName,
+        year: this.user.year,
+        kids: {},
+      })
+          .then((docRef) => {
+            console.log("Document successfully writtenggggg!", docRef.id);
+            this.addMonthToYear(docRef.id)
+          })
+          .catch((error) => {
+            console.error("Error writing documentgggg: ", error);
+          });
+    },
+    addMonthToYear(monthId){
+      db.collection("years").doc(this.user.currentYearId).set({
+        months: {
+          [monthId]: {
+            month_id:monthId,
+            name: this.newMonthName,
+          },
+        },
 
+      },{ merge: true })
+          .then(() => {
+            console.log("Document successfully written!");
+            this.showSaveMonth = false;
+            this.getYear();
+          })
+          .catch((error) => {
+            console.error("Error writing document year: ", error);
+          });
+    }
   }
 }
 </script>

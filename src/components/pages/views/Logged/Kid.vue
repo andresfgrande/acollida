@@ -39,7 +39,7 @@
       </div>
       <div class="form-control">
         <label for="initial_hour"> Hora inicio </label>
-        <input type="time" id="initial_hour" v-model="newInitialHour"/>
+        <input type="time" id="initial_hour"  v-model="newInitialHour"/>
       </div>
       <div class="form-control">
         <label for="final_hour"> Hora fin </label>
@@ -47,8 +47,6 @@
       </div>
       <button  type="button" @click="saveDay">Guardar</button>
     </div>
-    {{newInitialHour}}-{{newFinalHour}}
-    {{newDayDate}}
 
   </base-card>
 </template>
@@ -70,7 +68,7 @@ export default {
       showSaveDay: false,
       newDayDate : '',
       newInitialHour: '',
-      newFinalHour: '',
+      newFinalHour: '09:00',
       newDayMinutes: '',
       newDayPrice: '',
       siblingsPrice: false
@@ -108,6 +106,9 @@ export default {
           console.log("Document data kids:", doc.data());
           this.kid = doc.data();
           this.month = doc.data().months[/*this.monthId*/this.$route.params.monthId];
+          if( this.kid.fare === 2){
+            this.siblingsPrice = true;
+          }
         } else {
           console.log("No such document!");
         }
@@ -185,7 +186,24 @@ export default {
       }, { merge: true })
           .then(() => {
             console.log("Document successfully written!");
+            this.updateKidInMonth();
             this.showSaveDay = false;
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+    },
+    updateKidInMonth(){
+      db.collection("months").doc(this.monthId).set({
+        kids: {
+          [this.$route.params.kidId]: {
+            total_price: this.month.total_price,
+          },
+        },
+
+      }, { merge: true })
+          .then(() => {
+            console.log("Document successfully written!");
           })
           .catch((error) => {
             console.error("Error writing document: ", error);
