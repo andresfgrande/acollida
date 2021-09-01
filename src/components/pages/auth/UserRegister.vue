@@ -86,6 +86,7 @@ export default {
         normal_price: 2.25,
         siblings_price: 2,
         final_hour: new Date(Date.UTC('2021','05','06','09','00','00')),
+        years: []
       })
           .then(() => {
             console.log("Document successfully written!");

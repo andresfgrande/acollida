@@ -6,6 +6,13 @@
       <router-link to="/register" v-if="!isLoggedIn" @click="openNav">Crear cuenta</router-link>
       <router-link to="/account" v-if="isLoggedIn" @click="openNav">Mi cuenta</router-link>
       <a class="logout" v-if="isLoggedIn" @click="logout">Cerrar sesión</a>
+
+      <div v-if="isLoggedIn" class="year-nav">
+
+
+
+      </div>
+
     </div>
 
     <div class="sub-header">
@@ -16,7 +23,6 @@
 <!--        <span style="font-size:30px; text-align: center;">App</span>-->
         <router-link style="font-size:30px;" to="/" >Acollida</router-link>
       </div>
-
     </div>
 
   </div>
@@ -43,7 +49,8 @@ export default {
       this.$store.dispatch('logout');
       this.$router.replace('/login');
       this.openNav();
-    }
+    },
+
   }
 }
 </script>

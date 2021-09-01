@@ -5,12 +5,12 @@
 <!--      {{item.data.name}}-->
 <!--    </li>-->
 <!--  </ul>-->
-<!--  <ul>-->
-<!--    <li v-for="month in year.months" v-bind:key="month.month_id">-->
-<!--      {{month.name}}-->
-<!--    </li>-->
-<!--  </ul>-->
-<!--  {{year}}-->
+  <ul>
+    <li v-for="month in year.months" v-bind:key="month.month_id">
+      {{month.name}}
+    </li>
+  </ul>
+  {{year}}
 
   <div class="cards">
     <div class="card" v-for="month in year.months" v-bind:key="month.month_id">
@@ -19,15 +19,38 @@
     </div>
   </div>
 
-  <button v-if="!showSaveMonth" type="button" @click="createMonth">Añadir mes</button>
 
-  <div v-if="showSaveMonth">
-    <div class="form-control">
-      <label for="name"> Nombre (Ejem.: Abril) </label>
-      <input type="text" id="name" v-model="newMonthName"/>
+  <div v-if="showMonthOptions">
+
+    <button v-if="!showSaveMonth" type="button" @click="createMonth">Añadir mes</button>
+    <div v-if="showSaveMonth">
+      <div class="form-control">
+        <label for="name"> Nombre (Ejem.: Abril) </label>
+        <input type="text" id="name" v-model="newMonthName"/>
+      </div>
+      <button  type="button" @click="saveMonth">Guardar</button>
     </div>
-    <button  type="button" @click="saveMonth">Guardar</button>
+
   </div>
+
+  <div v-if="showYearOptions">
+    <button v-if="!showSaveYear" type="button" @click="createYear">Añadir año</button>
+    <div v-if="showSaveYear">
+      <div class="form-control">
+        <label for="newYear"> Nombre (Ejem.: 2021) </label>
+        <input type="number" id="newYear" v-model="newYear"/>
+      </div>
+      <button  type="button" @click="saveYear">Guardar</button>
+    </div>
+  </div>
+
+  {{yearsObject}}
+  <ul>
+    <li v-for="year in yearsObject" v-bind:key="year.id">
+      {{year.name}}
+    </li>
+  </ul>
+
 </template>
 
 <script>
@@ -39,6 +62,7 @@ export default {
   created(){
     this.getUsers();
     this.getCurrentYearData();
+
   },
   data(){
     return{
@@ -53,6 +77,11 @@ export default {
       showSaveMonth: false,
       newMonthName: '',
       newMonthYear: '',
+      showMonthOptions: false,
+      showSaveYear: false,
+      newYear: "",
+      showYearOptions: false,
+      yearsObject: {},
     }
   },
 
@@ -66,17 +95,6 @@ export default {
       console.log('holaaaaa',this.$store.getters.userId);
       // var usuarios = db.collection("usuarios").doc("2Qjn6e4UP0qZD11NL1oQ");
       var usuarios = db.collection("usuarios");
-      //
-      // usuarios.get().then((doc) => {
-      //   if (doc.exists) {
-      //     console.log("Document data:", doc.data());
-      //   } else {
-      //     // doc.data() will be undefined in this case
-      //     console.log("No such document!");
-      //   }
-      // }).catch((error) => {
-      //   console.log("Error getting document:", error);
-      // });
 
       usuarios.get()
           .then((r) => r.docs.map(
@@ -93,9 +111,39 @@ export default {
       docRefUsuarios.get().then((doc) => {
         if (doc.exists) {
           console.log("Document data:", doc.data());
-          this.user.currentYearId = doc.data().years[0];
-          console.log("current year", this.user.currentYearId);
-          this.getYear()
+
+          /*********************/
+          console.log('TEST',doc.data().years);
+
+          this.yearsObject = doc.data().years;
+          var array = [];
+          for (const year in doc.data().years){
+            array.push(year)
+          }
+          console.log('TEST2', array);
+          console.log('TEST3', array[array.length - 1]);
+
+          if(array[array.length - 1] !== undefined){
+            var currentYear = this.yearsObject[array[array.length - 1]]
+            console.log('TEST4',currentYear.id);
+            this.user.currentYearId = currentYear.id;
+
+            console.log("current year", this.user.currentYearId);
+            if(this.user.currentYearId !== undefined){
+              this.getYear()
+              this.showMonthOptions = true;
+              this.showYearOptions = false;
+            }else{
+              this.showMonthOptions = false;
+              this.showYearOptions = true;
+            }
+          }else{
+            this.showMonthOptions = false;
+            this.showYearOptions = true;
+          }
+
+          /***********************/
+
         } else {
           console.log("No such document!");
         }
@@ -111,6 +159,7 @@ export default {
           console.log("Document data:", doc.data());
           this.user.year = doc.data().year;
           this.year.months = doc.data().months;
+          this.newMonthYear = this.user.year;
         } else {
           console.log("No such document!");
         }
@@ -121,20 +170,40 @@ export default {
     createMonth(){
       this.showSaveMonth = true;
     },
+    createYear(){
+      this.showSaveYear = true;
+    },
     saveMonth(){
       db.collection("months").add({
         name: this.newMonthName,
-        year: this.user.year,
+        year: this.newMonthYear,
         kids: {},
       })
           .then((docRef) => {
-            console.log("Document successfully writtenggggg!", docRef.id);
+            console.log("Document successfully written!", docRef.id);
             this.addMonthToYear(docRef.id)
           })
           .catch((error) => {
-            console.error("Error writing documentgggg: ", error);
+            console.error("Error writing document: ", error);
           });
     },
+
+    saveYear(){
+      db.collection("years").add({
+        year: this.newYear,
+        months: {},
+      })
+          .then((docRef) => {
+            console.log("Document successfully written!", docRef.id);
+            this.user.currentYearId = docRef.id;
+            this.addYearToUser(this.user.currentYearId);
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+    },
+
+
     addMonthToYear(monthId){
       db.collection("years").doc(this.user.currentYearId).set({
         months: {
@@ -153,8 +222,35 @@ export default {
           .catch((error) => {
             console.error("Error writing document year: ", error);
           });
+    },
+
+    addYearToUser(yearId){
+
+      console.log('heyyy2',this.user.year);
+          db.collection("usuarios").doc(this.$store.getters.userId).set({
+
+        years:{
+          [this.newYear]:{
+            id: yearId,
+            name: this.newYear
+          }
+        }
+
+      },{ merge: true })
+          .then(() => {
+            console.log("Document successfully written year!");
+            this.showSaveMonth = false;
+            this.showSaveYear = false;
+            this.getYear();
+            this.showYearOptions = false;
+            this.showMonthOptions = true;
+          })
+          .catch((error) => {
+            console.error("Error writing document year: ", error);
+          });
     }
-  }
+  },
+
 }
 </script>
 
