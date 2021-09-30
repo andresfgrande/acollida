@@ -5,51 +5,54 @@
 <!--      {{item.data.name}}-->
 <!--    </li>-->
 <!--  </ul>-->
-  <ul>
-    <li v-for="month in year.months" v-bind:key="month.month_id">
-      {{month.name}}
-    </li>
-  </ul>
-  {{year}}
+<!--  <ul>-->
+<!--    <li v-for="month in year.months" v-bind:key="month.month_id">-->
+<!--      {{month.name}}-->
+<!--    </li>-->
+<!--  </ul>-->
+<!--  {{year}}-->
 
   <div class="cards">
-    <div class="card" v-for="month in year.months" v-bind:key="month.month_id">
-      <h4>{{month.name}}</h4>
-      <a @click="goToMonth(month.name, month.month_id)">Ver</a>
+    <div class="card" @click="goToMonth(month.name, month.month_id)" v-for="month in year.months" v-bind:key="month.month_id">
+      <h4 class="link-go" >{{month.name}}</h4>
+<!--      <a @click="goToMonth(month.name, month.month_id)">Ver</a>-->
     </div>
-  </div>
 
 
-  <div v-if="showMonthOptions">
+    <div v-if="showMonthOptions">
 
-    <button v-if="!showSaveMonth" type="button" @click="createMonth">Añadir mes</button>
-    <div v-if="showSaveMonth">
-      <div class="form-control">
-        <label for="name"> Nombre (Ejem.: Abril) </label>
-        <input type="text" id="name" v-model="newMonthName"/>
+      <button v-if="!showSaveMonth" type="button" class="button-new-element" @click="createMonth">Añadir mes</button>
+      <div v-if="showSaveMonth">
+        <div class="form-control">
+          <label for="name"> Nombre (Ejem.: Abril) </label>
+          <input type="text" id="name" v-model="newMonthName"/>
+        </div>
+        <button  type="button" class="button-new-element" @click="saveMonth">Guardar</button>
       </div>
-      <button  type="button" @click="saveMonth">Guardar</button>
+
     </div>
 
   </div>
+
+
 
   <div v-if="showYearOptions">
-    <button v-if="!showSaveYear" type="button" @click="createYear">Añadir año</button>
+    <button v-if="!showSaveYear" type="button" class="button-new-element" @click="createYear">Añadir año</button>
     <div v-if="showSaveYear">
       <div class="form-control">
         <label for="newYear"> Nombre (Ejem.: 2021) </label>
         <input type="number" id="newYear" v-model="newYear"/>
       </div>
-      <button  type="button" @click="saveYear">Guardar</button>
+      <button  type="button" class="button-new-element" @click="saveYear">Guardar</button>
     </div>
   </div>
 
-  {{yearsObject}}
-  <ul>
-    <li v-for="year in yearsObject" v-bind:key="year.id">
-      {{year.name}}
-    </li>
-  </ul>
+<!--  {{yearsObject}}-->
+<!--  <ul>-->
+<!--    <li v-for="year in yearsObject" v-bind:key="year.id">-->
+<!--      {{year.name}}-->
+<!--    </li>-->
+<!--  </ul>-->
 
 </template>
 
@@ -266,6 +269,11 @@ export default {
   height: 4rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+}
+
+.card:hover{
+  background-color: #0a8e5d;
 }
 
 .cards {
@@ -275,6 +283,41 @@ export default {
   grid-gap: 1rem;
 }
 
+input[type=text]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-control{
+  margin-top: 1.2em;
+}
+
+.button-new-element{
+  background-color: #3077a0;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  margin-top: 1.5em;
+  border-radius: 5px;
+}
+.button-new-element:hover{
+  background-color: #2a698e;
+}
+
+.link-go{
+  cursor: pointer;
+}
 
 @media (max-width: 1200px) {
   .cards {

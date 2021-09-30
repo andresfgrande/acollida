@@ -8,9 +8,21 @@
       <a class="logout" v-if="isLoggedIn" @click="logout">Cerrar sesión</a>
 
       <div v-if="isLoggedIn" class="year-nav">
+        <ul>
+          <li v-for="year in years" v-bind:key="year.id">
+            <a>{{year.name}}</a>
+            <button @click="deleteYear(year.name, year.id)" >borrar</button>
+          </li>
+        </ul>
 
-
-
+        <button v-if="!showSaveYear" type="button" @click="createYear">Añadir año</button>
+        <div v-if="showSaveYear">
+          <div class="form-control">
+            <label for="newYear"> Nombre (Ejem.: 2021) </label>
+            <input type="number" id="newYear" v-model="newYear"/>
+          </div>
+          <button  type="button" @click="saveYear">Guardar</button>
+        </div>
       </div>
 
     </div>
@@ -29,11 +41,22 @@
 </template>
 
 <script>
+import firebaseTool from "../../firestore";
+const db = firebaseTool.firestore();
 export default {
   name: "TheNavigation",
+  created(){
+    if(this.isLoggedIn){
+      this.getYearsByUser();
+    }
+
+  },
   data(){
     return{
       showNav: false,
+      years: {},
+      showSaveYear: false,
+      newYear: "",
     }
   },
   computed:{
@@ -45,12 +68,93 @@ export default {
     openNav(){
       this.showNav = this.showNav === false;
     },
+
     logout(){
       this.$store.dispatch('logout');
       this.$router.replace('/login');
       this.openNav();
     },
 
+    getYearsByUser(){
+      var docRefUsuarios = db.collection("usuarios").doc(this.$store.getters.userId);
+
+      docRefUsuarios.get().then((doc) => {
+        if (doc.exists) {
+          console.log("Document data de user:", doc.data());
+          console.log("años: ", doc.data().years);
+          this.years = doc.data().years;
+        } else {
+          console.log("No such document!");
+        }
+      }).catch((error) => {
+        console.log("Error getting document:", error);
+      });
+    },
+
+    createYear(){
+      this.showSaveYear = true;
+    },
+
+    saveYear(){
+      db.collection("years").add({
+        year: this.newYear,
+        months: {},
+      })
+          .then((docRef) => {
+            console.log("Document successfully written!", docRef.id);
+            this.addYearToUser(docRef.id);
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+    },
+
+    addYearToUser(yearId){
+
+      db.collection("usuarios").doc(this.$store.getters.userId).set({
+        years:{
+          [this.newYear]:{
+            id: yearId,
+            name: this.newYear
+          }
+        }
+      },{ merge: true })
+          .then(() => {
+            console.log("Document successfully written year!");
+            this.showSaveYear = false;
+            this.getYearsByUser();
+          })
+          .catch((error) => {
+            console.error("Error writing document year: ", error);
+          });
+    },
+
+    deleteYear(yearName,yearId){
+      console.log('delete year: ', yearId);
+      db.collection("years").doc(yearId).delete().then(() => {
+        console.log("Document successfully deleted!");
+        this.deleteYearFromUser(yearName);
+      }).catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+
+    },
+
+    deleteYearFromUser(yearName){
+      console.log(yearName);
+      delete this.years[yearName];
+      var years = this.years;
+      var users = db.collection("usuarios").doc(this.$store.getters.userId);
+      users.update({
+        years
+      },{ merge: true })
+          .then(() => {
+            console.log("Document successfully deleted year!");
+          })
+          .catch((error) => {
+            console.error("Error writing document year: ", error);
+          });
+    },
   }
 }
 </script>
@@ -119,6 +223,12 @@ export default {
   right: 25px;
   font-size: 36px;
   margin-left: 50px;
+}
+ul{
+  color: white;
+}
+ul li{
+  cursor: pointer;
 }
 
 @media screen and (max-height: 450px) {
