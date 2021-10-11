@@ -3,35 +3,39 @@
 <!--  <p>{{monthData}}</p>-->
 
   <div class="cards">
-    <div class="card" v-for="kid in monthData.kids" v-bind:key="kid.kid_id">
-      <h4>{{kid.name}} {{kid.surname}} {{kid.paid}}</h4>
+    <div class="card" v-for="kid in monthData.kids" v-bind:key="kid.kid_id" @click="goToKid(kid.name, kid.kid_id)">
+      <p v-if="!kid.paid">No pagado</p>
+      <p v-if="kid.paid">Pagado</p>
+      <h4>{{kid.name}} {{kid.surname}}</h4>
       <p>{{kid.total_price}}</p>
 
-      <a @click="goToKid(kid.name, kid.kid_id)">Ver</a>
+    </div>
+    <button v-if="!showSaveKid" class="button-new-element" type="button" @click="createKid">Añadir niño</button>
+
+    <div v-if="showSaveKid">
+      <div class="form-control">
+        <label for="name"> Nombre </label>
+        <input type="text" id="name"  v-model="newName"/>
+      </div>
+      <div class="form-control">
+        <label for="surname"> Apellido </label>
+        <input type="text" id="surname"  v-model="newSurname"/>
+      </div>
+      <div class="form-control">
+        <label for="final_hour"> Hora fin </label>
+        <input type="time" id="final_hour" v-model="newKidFinalHour"/>
+      </div>
+      <div class="form-control">
+        <label for="fare"> Tarifa </label>
+        <input type="number" id="fare" v-model="newFare"/>
+      </div>
+      <button  type="button" @click="saveKid" class="button-new-element">Guardar</button>
     </div>
   </div>
 
-  <button v-if="!showSaveKid" type="button" @click="createKid">Añadir niño</button>
 
-  <div v-if="showSaveKid">
-    <div class="form-control">
-      <label for="name"> Nombre </label>
-      <input type="text" id="name" v-model="newName"/>
-    </div>
-    <div class="form-control">
-      <label for="surname"> Apellido </label>
-      <input type="text" id="surname"  v-model="newSurname"/>
-    </div>
-    <div class="form-control">
-      <label for="final_hour"> Hora fin </label>
-      <input type="time" id="final_hour" v-model="newKidFinalHour"/>
-    </div>
-    <div class="form-control">
-      <label for="fare"> Tarifa </label>
-      <input type="number" id="fare" v-model="newFare"/>
-    </div>
-    <button  type="button" @click="saveKid">Guardar</button>
-  </div>
+
+
 </template>
 
 <script>
@@ -137,14 +141,18 @@ export default {
 .title{
   text-align: center;
 }
+.card:hover{
+  background-color: #0a8e5d;
+}
 .card {
   /*background-color: dodgerblue;*/
   background-color: #04AA6D;
   color: white;
   padding: 1rem;
-  height: 4rem;
+  /*height: 4rem;*/
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
 }
 
 .cards {
@@ -154,6 +162,49 @@ export default {
   grid-gap: 1rem;
 }
 
+.button-new-element{
+  background-color: #3077a0;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  margin-top: 1.5em;
+  border-radius: 5px;
+  max-height: 4rem;
+}
+
+input[type=text]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=number]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=time]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
 
 @media (max-width: 1200px) {
   .cards {

@@ -7,10 +7,17 @@
     <p>Minutos: {{month.total_minutes}}</p>
     <p>Pagado: {{month.paid}}</p>
     <p>Tarifa: {{kid.fare}}</p>
+<!--    {{kid}}-->
+<!--    {{month}}-->
 
     <div class="form-control">
       <label for="change_fare"> Precio Hermanos </label>
       <input type="checkbox" id="change_fare" v-model="siblingsPrice"/>
+    </div>
+
+    <div class="form-control">
+      <label for="change_paid"> Marcar como pagado</label>
+      <input type="checkbox" id="change_paid" v-model="isPaid"/>
     </div>
 
     <div class="day-container">
@@ -71,7 +78,8 @@ export default {
       newFinalHour: '09:00',
       newDayMinutes: '',
       newDayPrice: '',
-      siblingsPrice: false
+      siblingsPrice: false,
+      isPaid: false,
     }
   },
   created(){
@@ -96,6 +104,35 @@ export default {
           .catch((error) => {
             console.error("Error writing document: ", error);
           });
+    },
+
+    isPaid(){
+      var pagado = false;
+      if(this.isPaid === true){
+       pagado = true;
+       this.month.paid = true;
+      }else{
+        this.month.paid = false;
+      }
+
+      var monthId_string = this.monthId;
+
+      db.collection("kids").doc(/*this.kidId*/this.$route.params.kidId).set({
+        months: {
+          [monthId_string]: {
+            paid: pagado,
+          },
+        },
+
+      }, { merge: true })
+          .then(() => {
+            console.log("Document successfully written!");
+            this.isPaid = pagado;
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+
     }
   },
   methods:{
@@ -108,6 +145,9 @@ export default {
           this.month = doc.data().months[/*this.monthId*/this.$route.params.monthId];
           if( this.kid.fare === 2){
             this.siblingsPrice = true;
+          }
+          if(this.month.paid === true){
+            this.isPaid = true;
           }
         } else {
           console.log("No such document!");
