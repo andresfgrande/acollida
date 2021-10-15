@@ -11,6 +11,7 @@ import store from './store/index.js';
 
 const router = createRouter({
     history: createWebHistory(),
+    base: '/acollida',
     routes: [
         { path: '/', redirect:'/dashboard' },
         { path: '/dashboard', component: Dashboard, meta:{requiresAuth: true} },
