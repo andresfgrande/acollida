@@ -13,7 +13,7 @@ const router = createRouter({
     history: createWebHistory(),
     base: '/acollida',
     routes: [
-        { path: '/', redirect:'/dashboard' },
+        { path: '/acollida', redirect:'/dashboard' },
         { path: '/dashboard', component: Dashboard, meta:{requiresAuth: true} },
         { path: '/login' , component: UserLogin, meta:{requiresUnauth: true}},
         { path: '/register' , component: UserRegister, meta:{requiresUnauth: true}},
