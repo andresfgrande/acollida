@@ -74,7 +74,6 @@ export default {
   name: "Kid",
   props:['kidId','monthId'],
   components: {BaseCard, DayItem},
-
   data(){
     return{
       kid:'',
