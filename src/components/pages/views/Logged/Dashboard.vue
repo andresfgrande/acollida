@@ -310,6 +310,7 @@ input[type=text]{
   cursor: pointer;
   margin-top: 1.5em;
   border-radius: 5px;
+  margin-left: 5%;
 }
 .button-new-element:hover{
   background-color: #2a698e;
@@ -334,5 +335,30 @@ input[type=text]{
 }
 @media (max-width: 340px) {
   .cards { grid-template-columns: repeat(1, 1fr); }
+}
+.form-control label{
+  display: block;
+}
+.form-control{
+  margin-left: 5%;
+}
+
+input[type=text]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=number]{
+  width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 </style>

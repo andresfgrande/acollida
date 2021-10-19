@@ -1,6 +1,9 @@
 <template>
+
   <base-card>
+    <button class="link-atras" @click="goToMonth(month.month_name, month.month_year)">Ver {{ month.month_name }} {{month.month_year}}</button>
     <h3 class="month-data">{{ month.month_name }} {{month.month_year}}</h3>
+
     <h3 class="kid-name">{{ kid.name }} {{kid.surname}}</h3>
     <div class="info-actualizada">
       <div class="row">
@@ -143,6 +146,9 @@ export default {
     }
   },
   methods:{
+    goToMonth(month, year){
+      this.$router.push({name:'month', params:{ name: month, year: year, monthId: this.$route.params.monthId/*this.monthId*/}});
+    },
     getKid(){
       var docRefKid = db.collection("kids").doc(this.$route.params.kidId/*this.kidId*/);
       docRefKid.get().then((doc) => {
@@ -388,13 +394,16 @@ input[type=date]{
 
 @media (min-width: 768px) {
   .card{
-    margin-right: 1em;
-    margin-left: 1em;
+    /*margin-right: 1em;*/
+    /*margin-left: 1em;*/
   }
 }
 @media (max-width: 500px) {
   * {
     box-sizing: unset;
+  }
+  .column {
+    width: 100%;
   }
 }
 @media (min-width: 500px) {
@@ -415,6 +424,21 @@ input[type=date]{
   content: "";
   display: table;
   clear: both;
+}
+
+.link-atras{
+  background-color: #ccc;
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  margin-top: 1.5em;
+  border-radius: 5px;
 }
 </style>
 

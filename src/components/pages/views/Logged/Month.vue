@@ -1,8 +1,10 @@
 <template>
+  <button class="link-atras" @click="goToDashboard()">Ver año {{monthData.year}}</button>
   <h3 class="title"> {{ monthData.name }} {{monthData.year}}</h3>
 <!--  <p>{{monthData}}</p>-->
 
   <div class="cards">
+
     <div class="card" v-bind:class="{ 'no-paid-card': !kid.paid}"
          v-for="kid in monthData.kids" v-bind:key="kid.kid_id" @click="goToKid(kid.name, kid.kid_id)">
       <p class="paid" v-if="!kid.paid">No pagado</p>
@@ -64,6 +66,9 @@ export default {
   methods:{
     goToKid(name, id){
       this.$router.push({name:'kid', params:{ name: name, kidId: id, monthId: this.$route.params.monthId/*this.monthId*/}});
+    },
+    goToDashboard(){
+      this.$router.push({name:'dashboard'});
     },
     getAlumnosFromMonth(){
       var docRefAlumnos = db.collection("months").doc(this.$route.params.monthId/*this.monthId*/);
@@ -250,5 +255,21 @@ input[type=time]{
 }
 @media (max-width: 340px) {
   .cards { grid-template-columns: repeat(1, 1fr); }
+}
+
+.link-atras{
+  background-color: #ccc;
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  margin-top: 1.5em;
+  border-radius: 5px;
+  margin-left: 5%;
 }
 </style>

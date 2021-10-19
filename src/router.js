@@ -14,13 +14,13 @@ const router = createRouter({
     base: '/',
     routes: [
         { path: '/', redirect:'/dashboard' },
-        { path: '/dashboard', component: Dashboard, meta:{requiresAuth: true} },
+        { path: '/dashboard', name: 'dashboard', component: Dashboard, meta:{requiresAuth: true} },
         { path: '/login' , component: UserLogin, meta:{requiresUnauth: true}},
         { path: '/register' , component: UserRegister, meta:{requiresUnauth: true}},
         { path: '/account' , component: Account, meta:{requiresAuth: true}},
         { path: '/month/:name/:year/:monthId' ,name: 'month', component: Month, props:true ,meta:{requiresAuth: true}},
         { path: '/kid/:name/:kidId/:monthId' ,name: 'kid', component: Kid, props:true ,meta:{requiresAuth: true}},
-        { path: '/:noFound(.*)' , component: NotFound }
+        { path: '/:noFound(.*)' , component: NotFound, meta:{requiresAuth: true} }
     ]
 });
 
