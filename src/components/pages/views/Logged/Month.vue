@@ -3,12 +3,12 @@
 <!--  <p>{{monthData}}</p>-->
 
   <div class="cards">
-    <div class="card" v-for="kid in monthData.kids" v-bind:key="kid.kid_id" @click="goToKid(kid.name, kid.kid_id)">
-      <p v-if="!kid.paid">No pagado</p>
-      <p v-if="kid.paid">Pagado</p>
-      <h4>{{kid.name}} {{kid.surname}}</h4>
-      <p>{{kid.total_price}}</p>
-
+    <div class="card" v-bind:class="{ 'no-paid-card': !kid.paid}"
+         v-for="kid in monthData.kids" v-bind:key="kid.kid_id" @click="goToKid(kid.name, kid.kid_id)">
+      <p class="paid" v-if="!kid.paid">No pagado</p>
+      <p class="paid" v-if="kid.paid">Pagado</p>
+      <h4 class="alumno-name">{{kid.name}} {{kid.surname}}</h4>
+      <p class="price">Monto: {{kid.total_price}}€</p>
     </div>
     <button v-if="!showSaveKid" class="button-new-element" type="button" @click="createKid">Añadir niño</button>
 
@@ -153,6 +153,35 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   cursor: pointer;
+}
+
+.no-paid-card{
+  background-color: #c56060;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+}
+.no-paid-card:hover{
+  background-color: #934343;
+}
+
+.paid{
+  font-weight: bold;
+  text-align: right;
+  margin-top: 0.5em;
+  margin-bottom: 1.5em;
+}
+.alumno-name{
+  text-transform: uppercase;
+  text-align: center;
+}
+.price{
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 0.5em;
+  text-align: center;
 }
 
 .cards {

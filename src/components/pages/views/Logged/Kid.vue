@@ -1,24 +1,31 @@
 <template>
   <base-card>
-    <h3>{{ month.month_name }} {{month.month_year}}</h3>
-    <h3>{{ kid.name }} {{kid.surname}}</h3>
-    <p>Monto: {{month.total_price}}</p>
-    <p>Horas: {{month.total_hours}}</p>
-    <p>Minutos: {{month.total_minutes}}</p>
-    <p>Pagado: {{month.paid}}</p>
-    <p>Tarifa: {{kid.fare}}</p>
-<!--    {{kid}}-->
-<!--    {{month}}-->
+    <h3 class="month-data">{{ month.month_name }} {{month.month_year}}</h3>
+    <h3 class="kid-name">{{ kid.name }} {{kid.surname}}</h3>
+    <div class="info-actualizada">
+      <div class="row">
+        <div class="column" >
+          <p>Monto: {{month.total_price}}</p>
+          <p>Horas: {{month.total_hours}}</p>
+          <p>Minutos: {{month.total_minutes}}</p>
+        </div>
+        <div class="column" >
+          <p>Pagado: {{month.paid}}</p>
+          <p>Tarifa: {{kid.fare}}</p>
+          <div class="form-control">
+            <input type="checkbox" id="change_fare" v-model="siblingsPrice"/>
+            <label for="change_fare"> Precio Hermanos </label>
+          </div>
 
-    <div class="form-control">
-      <label for="change_fare"> Precio Hermanos </label>
-      <input type="checkbox" id="change_fare" v-model="siblingsPrice"/>
+          <div class="form-control">
+            <input type="checkbox" id="change_paid" v-model="isPaid"/>
+            <label for="change_paid"> Marcar como pagado</label>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-control">
-      <label for="change_paid"> Marcar como pagado</label>
-      <input type="checkbox" id="change_paid" v-model="isPaid"/>
-    </div>
+
 
     <div class="day-container">
       <table class="styled-table">
@@ -26,7 +33,7 @@
         <tr>
           <th>Dia</th>
           <th>Horas</th>
-          <th>Minutos</th>
+          <th>Min.</th>
           <th>Precio</th>
         </tr>
         </thead>
@@ -37,11 +44,11 @@
         </tbody>
       </table>
     </div>
-    <button v-if="!showSaveDay" type="button" @click="createDay">Añadir dia</button>
+    <button class="button-new-element" v-if="!showSaveDay" type="button" @click="createDay">Añadir dia</button>
 
     <div v-if="showSaveDay">
       <div class="form-control">
-        <label for="day"> Hora inicio </label>
+        <label for="day"> Fecha inicio </label>
         <input type="date" id="day" v-model="newDayDate"/>
       </div>
       <div class="form-control">
@@ -52,7 +59,7 @@
         <label for="final_hour"> Hora fin </label>
         <input type="time" id="final_hour" v-model="newFinalHour"/>
       </div>
-      <button  type="button" @click="saveDay">Guardar</button>
+      <button class="button-new-element" type="button" @click="saveDay">Guardar</button>
     </div>
 
   </base-card>
@@ -128,6 +135,7 @@ export default {
           .then(() => {
             console.log("Document successfully written!");
             this.isPaid = pagado;
+            this.setPaid(this.isPaid);
           })
           .catch((error) => {
             console.error("Error writing document: ", error);
@@ -249,6 +257,23 @@ export default {
             console.error("Error writing document: ", error);
           });
     },
+
+    setPaid(paid){
+      db.collection("months").doc(this.monthId).set({
+        kids: {
+          [this.$route.params.kidId]: {
+            paid: paid,
+          },
+        },
+
+      }, { merge: true })
+          .then(() => {
+            console.log("Document successfully written Paid!");
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+    },
   }
 }
 </script>
@@ -256,6 +281,22 @@ export default {
 <style scoped>
 h3{
   text-align: center;
+}
+
+.form-control{
+  margin-bottom: 0.7em;
+}
+.month-data{
+  font-weight: normal;
+}
+.kid-name{
+  font-size: 1.3rem;
+}
+.month-data{
+  text-transform: uppercase;
+}
+.column p{
+  font-weight: bold;
 }
 .styled-table {
   border-collapse: collapse;
@@ -289,4 +330,92 @@ h3{
   font-weight: bold;
   color: #009879;
 }
+
+.button-new-element{
+  background-color: #3077a0;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  margin-top: 1.5em;
+  border-radius: 5px;
+}
+.button-new-element:hover{
+  background-color: #2a698e;
+}
+
+
+input[type=text]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=number]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=time]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=date]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .card{
+    margin-right: 1em;
+    margin-left: 1em;
+  }
+}
+@media (max-width: 500px) {
+  * {
+    box-sizing: unset;
+  }
+}
+@media (min-width: 500px) {
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 </style>
+
