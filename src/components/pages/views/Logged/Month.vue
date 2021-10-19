@@ -133,6 +133,8 @@ export default {
             console.log("Document successfully written!");
             this.showSaveKid = false;
             this.getAlumnosFromMonth();
+            this.newName = "";
+            this.newSurname = "";
           })
           .catch((error) => {
             console.error("Error writing document: ", error);

@@ -221,6 +221,7 @@ export default {
             console.log("Document successfully written!");
             this.showSaveMonth = false;
             this.getYear();
+            this.newMonthName = "";
           })
           .catch((error) => {
             console.error("Error writing document year: ", error);
@@ -247,6 +248,7 @@ export default {
             this.getYear();
             this.showYearOptions = false;
             this.showMonthOptions = true;
+            this.newYear = "";
           })
           .catch((error) => {
             console.error("Error writing document year: ", error);
