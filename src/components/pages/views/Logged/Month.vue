@@ -10,7 +10,8 @@
       <p class="paid" v-if="!kid.paid">No pagado</p>
       <p class="paid" v-if="kid.paid">Pagado</p>
       <h4 class="alumno-name">{{kid.name}} {{kid.surname}}</h4>
-      <p class="price">Monto: {{kid.total_price}}€</p>
+      <p class="price">Horas: {{kid.total_hours}}</p>
+      <p class="price">Monto: {{roundNumber(kid.total_price)}}€</p>
     </div>
     <button v-if="!showSaveKid" class="button-new-element" type="button" @click="createKid">Añadir niño</button>
 
@@ -31,7 +32,7 @@
         <label for="fare"> Tarifa </label>
         <input type="number" id="fare" v-model="newFare"/>
       </div>
-      <button  type="button" @click="saveKid" class="button-new-element">Guardar</button>
+      <button  type="button" @click="saveKid" class="button-new-element" v-bind:class="{ 'button-disabled': isButtonDisabled}" :disabled="isButtonDisabled">Guardar</button>
     </div>
   </div>
 
@@ -63,7 +64,20 @@ export default {
       newSurname: ''
     }
   },
+  computed:{
+    isButtonDisabled(){
+      if(this.newName === '' || this.newSurname === ''){
+        return true;
+      }else{
+        return false
+      }
+    }
+  },
   methods:{
+    roundNumber(num){
+      num = parseFloat(num);
+      return Math.round((num + Number.EPSILON) * 100) / 100;
+    },
     goToKid(name, id){
       this.$router.push({name:'kid', params:{ name: name, kidId: id, monthId: this.$route.params.monthId/*this.monthId*/}});
     },
@@ -125,6 +139,7 @@ export default {
             surname: this.newSurname,
             paid: false,
             total_price: 0,
+            total_hours: 0
           },
         },
 
@@ -196,6 +211,10 @@ export default {
   margin: 0 auto;
   display: grid;
   grid-gap: 1rem;
+}
+
+.button-new-element.button-disabled{
+  background-color: #759db5;
 }
 
 .button-new-element{

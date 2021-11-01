@@ -8,7 +8,7 @@
     <div class="info-actualizada">
       <div class="row">
         <div class="column" >
-          <p>Monto: {{month.total_price}}</p>
+          <p>Monto: {{roundNumber(month.total_price)}}</p>
           <p>Horas: {{month.total_hours}}</p>
           <p>Minutos: {{month.total_minutes}}</p>
         </div>
@@ -62,7 +62,7 @@
         <label for="final_hour"> Hora fin </label>
         <input type="time" id="final_hour" v-model="newFinalHour"/>
       </div>
-      <button class="button-new-element" type="button" @click="saveDay">Guardar</button>
+      <button class="button-new-element" type="button" @click="saveDay" v-bind:class="{'button-disabled': isButtonDisabled}" :disabled="isButtonDisabled">Guardar</button>
     </div>
 
   </base-card>
@@ -94,7 +94,15 @@ export default {
   created(){
     this.getKid();
   },
-
+  computed:{
+    isButtonDisabled(){
+      if(this.newDayDate === '' || this.newInitialHour === '' || this.newFinalHour === ''){
+        return true;
+      }else{
+        return false
+      }
+    }
+  },
   watch:{
     siblingsPrice(){
       if(this.siblingsPrice === true){
@@ -146,6 +154,10 @@ export default {
     }
   },
   methods:{
+    roundNumber(num){
+      num = parseFloat(num);
+      return Math.round((num + Number.EPSILON) * 100) / 100;
+    },
     goToMonth(month, year){
       this.$router.push({name:'month', params:{ name: month, year: year, monthId: this.$route.params.monthId/*this.monthId*/}});
     },
@@ -200,7 +212,7 @@ export default {
         day: this.newDayDate,
         // day_hours: 1,
         day_minutes: this.newDayMinutes,
-        day_price: this.newDayPrice,
+        day_price: this.roundNumber(this.newDayPrice),
         final_hour: this.newFinalHour,
         initial_hour: this.newInitialHour,
       })
@@ -212,6 +224,17 @@ export default {
             console.error("Error writing document: ", error);
           });
     },
+    removeDayToKid(dayId){
+      var days = this.month.days;
+      var index = days.indexOf(dayId);
+      if (index > -1) {
+        days.splice(index, 1);
+      }
+      // var monthId_string = this.monthId;
+
+
+    },
+
     addDayToKid(dayId){
        var days = this.month.days;
        days.push(dayId);
@@ -222,7 +245,7 @@ export default {
         var horas_float = parseInt(this.month.total_minutes)/60;
         var horas = parseInt(horas_float);
         var minutos = (horas_float - horas)*60
-        this.month.total_hours = horas + ":" + minutos;
+        this.month.total_hours = horas + ":" + this.roundNumber(minutos);
         this.month.total_price = parseFloat(this.month.total_price) + parseFloat(this.newDayPrice);
       /***************/
 
@@ -232,7 +255,7 @@ export default {
             'days':days,
             total_hours: this.month.total_hours,
             total_minutes: this.month.total_minutes,
-            total_price: this.month.total_price
+            total_price: this.roundNumber(this.month.total_price)
           },
         },
 
@@ -250,7 +273,8 @@ export default {
       db.collection("months").doc(this.monthId).set({
         kids: {
           [this.$route.params.kidId]: {
-            total_price: this.month.total_price,
+            total_price: this.roundNumber(this.month.total_price),
+            total_hours: this.month.total_hours,
           },
         },
 
@@ -354,6 +378,9 @@ h3{
   background-color: #2a698e;
 }
 
+.button-new-element.button-disabled{
+  background-color: #759db5;
+}
 
 input[type=text]{
   width: 100%;
