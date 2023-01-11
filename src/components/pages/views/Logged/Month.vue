@@ -3,6 +3,7 @@
   <h3 class="title"> {{ monthData.name }} {{monthData.year}}</h3>
 <!--  <p>{{monthData}}</p>-->
 
+{{test}}
   <div class="cards">
 
     <div class="card" v-bind:class="{ 'no-paid-card': !kid.paid}"
@@ -43,6 +44,7 @@
 
 <script>
 import firebaseTool from "../../../../firestore";
+
 const db = firebaseTool.firestore();
 export default {
   name: "Month",
@@ -61,7 +63,8 @@ export default {
       newKidFinalHour: '09:00',
       newName: '',
       newFare: 2.25,
-      newSurname: ''
+      newSurname: '',
+      test:''
     }
   },
   computed:{
@@ -84,6 +87,8 @@ export default {
     goToDashboard(){
       this.$router.push({name:'dashboard'});
     },
+    
+
     getAlumnosFromMonth(){
       var docRefAlumnos = db.collection("months").doc(this.$route.params.monthId/*this.monthId*/);
 
@@ -93,6 +98,7 @@ export default {
           this.month.kids = doc.data().kids;
           this.month.monthId = this.monthId;
           this.monthData = doc.data();
+          
         } else {
           console.log("No such document!");
         }

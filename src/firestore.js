@@ -1,5 +1,6 @@
 import  firebase from 'firebase';
-import 'firebase/firestore'
+import 'firebase/firestore';
+
 
 // import "firebase/auth";
 // import "firebase/firestore";

@@ -8,7 +8,7 @@ import Account from './components/pages/views/Logged/Account';
 import Month from './components/pages/views/Logged/Month';
 import Kid from './components/pages/views/Logged/Kid';
 import store from './store/index.js';
-
+import SpecificYear from './components/pages/views/Logged/SpecificYear';
 const router = createRouter({
     history: createWebHistory(),
     base: '/',
@@ -20,7 +20,8 @@ const router = createRouter({
         { path: '/account' , component: Account, meta:{requiresAuth: true}},
         { path: '/month/:name/:year/:monthId' ,name: 'month', component: Month, props:true ,meta:{requiresAuth: true}},
         { path: '/kid/:name/:kidId/:monthId' ,name: 'kid', component: Kid, props:true ,meta:{requiresAuth: true}},
-        { path: '/:noFound(.*)' , component: NotFound, meta:{requiresAuth: true} }
+        { path: '/:noFound(.*)' , component: NotFound, meta:{requiresAuth: true} },
+        { path: '/dashboard/year/:yearNum' ,name: 'year', component: SpecificYear, props:true ,meta:{requiresAuth: true}}
     ]
 });
 

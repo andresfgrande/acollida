@@ -10,8 +10,8 @@
       <div v-if="isLoggedIn" class="year-nav">
         <ul>
           <li v-for="year in years" v-bind:key="year.id">
-            <a>{{year.name}}</a>
-            <button @click="deleteYear(year.name, year.id)" >borrar</button>
+            <p @click="goToSpecificYear(year.name)">{{year.name}}</p>
+            <!--<button @click="deleteYear(year.name, year.id)" >borrar</button>-->
           </li>
         </ul>
 
@@ -67,6 +67,10 @@ export default {
   methods:{
     openNav(){
       this.showNav = this.showNav === false;
+    },
+
+    goToSpecificYear(year){
+      this.$router.push({name:'year', params:{ yearNum: year}});
     },
 
     logout(){
